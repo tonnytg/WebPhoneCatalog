@@ -2,6 +2,7 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"regexp"
 	"sync"
@@ -13,14 +14,14 @@ var (
 	createContactRegex = regexp.MustCompile(`^\/list[\/]*$`)
 )
 
-type user struct {
+type contact struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
 	Phone string `json:"phone"`
 }
 
 type datastore struct {
-	m map[string]user
+	m map[string]contact
 	*sync.RWMutex
 }
 
@@ -33,12 +34,15 @@ func (h *userHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case r.Method == http.MethodGet && listContactRegex.MatchString(r.URL.Path):
 		h.List(w, r)
+		fmt.Println("List All accessed!")
 		return
 	case r.Method == http.MethodGet && getContactRegex.MatchString(r.URL.Path):
 		h.Get(w, r)
+		fmt.Println("Get One Contact accessed!")
 		return
 	case r.Method == http.MethodPost && createContactRegex.MatchString(r.URL.Path):
 		h.Create(w, r)
+		fmt.Println("Creat Contact accessed!")
 		return
 	default:
 		notFound(w, r)
@@ -48,12 +52,12 @@ func (h *userHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (h *userHandler) List(w http.ResponseWriter, r *http.Request) {
 	h.store.RLock()
-	users := make([]user, 0, len(h.store.m))
+	contact := make([]contact, 0, len(h.store.m))
 	for _, v := range h.store.m {
-		users = append(users, v)
+		contact = append(contact, v)
 	}
 	h.store.RUnlock()
-	jsonBytes, err := json.Marshal(users)
+	jsonBytes, err := json.Marshal(contact)
 	if err != nil {
 		internalServerError(w, r)
 		return
@@ -86,7 +90,7 @@ func (h *userHandler) Get(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *userHandler) Create(w http.ResponseWriter, r *http.Request) {
-	var u user
+	var u contact
 	if err := json.NewDecoder(r.Body).Decode(&u); err != nil {
 		internalServerError(w, r)
 		return
@@ -117,8 +121,8 @@ func main() {
 	mux := http.NewServeMux()
 	userH := &userHandler{
 		store: &datastore{
-			m: map[string]user{
-				"1": user{ID: "1", Name: "tonnytg", Phone: "+551199999999"},
+			m: map[string]contact{
+				"1": contact{ID: "1", Name: "tonnytg", Phone: "+551199999999"},
 			},
 			RWMutex: &sync.RWMutex{},
 		},
@@ -126,5 +130,10 @@ func main() {
 	mux.Handle("/list", userH)
 	mux.Handle("/list/", userH)
 
-	http.ListenAndServe("localhost:8080", mux)
+	fmt.Println("Conf connection: 0.0.0.0:3000")
+	fmt.Println("Try access: http://localhost:3000/list")
+	err := http.ListenAndServe("0.0.0.0:3000", mux)
+	if err != nil {
+		fmt.Println(err)
+	}
 }
