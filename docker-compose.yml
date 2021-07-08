@@ -1,0 +1,16 @@
+version: '3'
+
+services:
+  backend:
+    image: tonnytg/catalogapi:version1.0
+    container_name: backend
+    restart: always
+    tty: true
+    networks:
+      - app-network
+    ports:
+      - "3000:3000"
+
+networks:
+  app-network:
+    driver: bridge
