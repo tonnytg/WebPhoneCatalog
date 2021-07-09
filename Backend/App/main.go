@@ -1,22 +1,29 @@
 package main
 
 import (
+	"database/sql"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"regexp"
 	"sync"
+
+	_ "github.com/lib/pq"
 )
 
 var (
 	listContactRegex   = regexp.MustCompile(`^\/list[\/]*$`)
 	getContactRegex    = regexp.MustCompile(`^\/list\/(\d+)$`)
 	createContactRegex = regexp.MustCompile(`^\/list[\/]*$`)
+
+	db  *sql.DB
+	err error
 )
 
 type contact struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
+	ID    string `json:"id"`
+	Name  string `json:"name"`
 	Phone string `json:"phone"`
 }
 
@@ -27,6 +34,12 @@ type datastore struct {
 
 type userHandler struct {
 	store *datastore
+}
+
+func checkErr(err error) {
+	if err != nil {
+		panic(err.Error())
+	}
 }
 
 func (h *userHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -117,7 +130,59 @@ func notFound(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("not found"))
 }
 
+func sqlSelect() {
+
+	sqlStatement, err := db.Query("SELECT id, name, phone FROM " + TableName)
+	checkErr(err)
+
+	for sqlStatement.Next() {
+
+		var contact Contact
+
+		err = sqlStatement.Scan(&contact.ID, &contact.Name, &contact.Phone)
+		checkErr(err)
+
+		fmt.Printf("%d\t%s\t%s \n", contact.ID, contact.Name, contact.Phone)
+	}
+}
+
+func sqlInsert(id int, name, phone string) {
+
+	sqlStatement := fmt.Sprintf("INSERT INTO %s VALUES ($1, $2, $3)", TableName)
+
+	insert, err := db.Prepare(sqlStatement)
+	checkErr(err)
+
+	result, err := insert.Exec(  id, name, phone)
+	if err != nil {
+		log.Fatalln("Error inserting:", err)
+	}
+
+	affect, err := result.RowsAffected()
+	checkErr(err)
+
+	fmt.Println(affect)
+}
+
+func init () {
+	fmt.Printf("Accessing %s ... ", DbName)
+
+	db, err = sql.Open(PostgresDriver, DataSourceName)
+
+	if err != nil {
+		panic(err.Error())
+	} else {
+		fmt.Println("Connected!")
+	}
+
+	defer db.Close()
+
+	sqlSelect()
+	sqlInsert(2,"test","+551188889999")
+}
+
 func main() {
+
 	mux := http.NewServeMux()
 	userH := &userHandler{
 		store: &datastore{
