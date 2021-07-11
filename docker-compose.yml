@@ -1,8 +1,22 @@
 version: '3'
 
 services:
+  database:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: "Postgres2021!"
+      POSTGRES_DB: "contacts"
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./Database/create.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - app-network
+
   backend:
-    image: tonnytg/catalogapi:version1.0
+    #    image: tonnytg/catalogapi:version1.0
+    build:
+      context: Backend
     container_name: backend
     restart: always
     tty: true
@@ -10,6 +24,8 @@ services:
       - app-network
     ports:
       - "3000:3000"
+    depends_on:
+      - "database"
 
 networks:
   app-network:
