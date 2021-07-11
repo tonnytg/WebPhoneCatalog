@@ -40,7 +40,7 @@ func sqlInsert(id int, name, phone string) {
 	insert, err := db.Prepare(sqlStatement)
 	checkErr(err)
 
-	result, err := insert.Exec(  id, name, phone)
+	result, err := insert.Exec(id, name, phone)
 	if err != nil {
 		log.Fatalln("Error inserting:", err)
 	}

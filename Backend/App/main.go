@@ -9,7 +9,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-func init () {
+func init() {
 	fmt.Printf("Accessing %s ... ", DbName)
 
 	db, err = sql.Open(PostgresDriver, DataSourceName)
@@ -23,7 +23,7 @@ func init () {
 	defer db.Close()
 
 	sqlSelect()
-	sqlInsert(2,"test","+551188889999")
+	sqlInsert(2, "test", "+551188889999")
 }
 
 func main() {
