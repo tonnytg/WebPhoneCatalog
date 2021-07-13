@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
-	"sync"
 )
 
 var (
@@ -13,21 +12,6 @@ var (
 	getContactRegex    = regexp.MustCompile(`^\/list\/(\d+)$`)
 	createContactRegex = regexp.MustCompile(`^\/list[\/]*$`)
 )
-
-type contact struct {
-	ID    string `json:"id"`
-	Name  string `json:"name"`
-	Phone string `json:"phone"`
-}
-
-type datastore struct {
-	m map[string]contact
-	*sync.RWMutex
-}
-
-type userHandler struct {
-	store *datastore
-}
 
 func (h *userHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("content-type", "application/json")
@@ -52,6 +36,7 @@ func (h *userHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (h *userHandler) List(w http.ResponseWriter, r *http.Request) {
 	h.store.RLock()
+
 	contact := make([]contact, 0, len(h.store.m))
 	for _, v := range h.store.m {
 		contact = append(contact, v)

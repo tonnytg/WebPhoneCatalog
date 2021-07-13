@@ -1,34 +1,33 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
+	"log"
 	"net/http"
 	"sync"
 
 	_ "github.com/lib/pq"
 )
 
-func init() {
-	fmt.Printf("Accessing %s ... ", DbName)
+type contact struct {
+	ID    string `json:"id"`
+	Name  string `json:"name"`
+	Phone string `json:"phone"`
+}
 
-	db, err = sql.Open(PostgresDriver, DataSourceName)
+type datastore struct {
+	m map[string]contact
+	*sync.RWMutex
+}
 
-	if err != nil {
-		panic(err.Error())
-	} else {
-		fmt.Println("Connected!")
-	}
-
-	defer db.Close()
-
-	sqlSelect()
-	sqlInsert(2, "test", "+551188889999")
+type userHandler struct {
+	store *datastore
 }
 
 func main() {
 
 	mux := http.NewServeMux()
+
 	userH := &userHandler{
 		store: &datastore{
 			m: map[string]contact{
@@ -37,13 +36,13 @@ func main() {
 			RWMutex: &sync.RWMutex{},
 		},
 	}
-	mux.Handle("/list", userH)
-	mux.Handle("/list/", userH)
+	mux.Handle("/contacts", userH)
+	mux.Handle("/contact/", userH)
 
 	fmt.Println("Conf connection: 0.0.0.0:3000")
 	fmt.Println("Try access: http://localhost:3000/list")
 	err := http.ListenAndServe("0.0.0.0:3000", mux)
 	if err != nil {
-		fmt.Println(err)
+		log.Println(err)
 	}
 }
