@@ -38,7 +38,7 @@ func sqlSelect() {
 
 		err = rows.Scan(&contact.ID, &contact.Name, &contact.Phone)
 		if err != nil {
-			log.Fatal("Scan copy:",err)
+			log.Fatal("Scan copy:", err)
 		}
 		fmt.Printf("%d\t%s\t%s \n", contact.ID, contact.Name, contact.Phone)
 	}
