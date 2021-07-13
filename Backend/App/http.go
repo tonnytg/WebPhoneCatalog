@@ -8,9 +8,9 @@ import (
 )
 
 var (
-	listContactRegex   = regexp.MustCompile(`^\/list[\/]*$`)
-	getContactRegex    = regexp.MustCompile(`^\/list\/(\d+)$`)
-	createContactRegex = regexp.MustCompile(`^\/list[\/]*$`)
+	listContactRegex   = regexp.MustCompile(`^\/contacts[\/]*$`)
+	getContactRegex    = regexp.MustCompile(`^\/contact\/(\d+)$`)
+	createContactRegex = regexp.MustCompile(`^\/contact[\/]*$`)
 )
 
 func (h *userHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
