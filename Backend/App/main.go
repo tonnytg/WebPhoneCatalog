@@ -39,8 +39,10 @@ func main() {
 	mux.Handle("/contacts", userH)
 	mux.Handle("/contact/", userH)
 
+	go receiver()
+
 	fmt.Println("Conf connection: 0.0.0.0:3000")
-	fmt.Println("Try access: http://localhost:3000/list")
+	fmt.Println("Try access: http://localhost:3000/contacts")
 	err := http.ListenAndServe("0.0.0.0:3000", mux)
 	if err != nil {
 		log.Println(err)
