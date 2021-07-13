@@ -90,6 +90,7 @@ func (h *userHandler) Create(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonBytes)
+	sender(string(jsonBytes[:]))
 }
 
 func internalServerError(w http.ResponseWriter, r *http.Request) {
