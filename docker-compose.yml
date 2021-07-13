@@ -27,6 +27,15 @@ services:
     depends_on:
       - "database"
 
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:3.8.12-management
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - app-network
+
 networks:
   app-network:
     driver: bridge
