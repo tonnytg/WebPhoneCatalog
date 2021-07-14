@@ -22,7 +22,7 @@ func receiver() {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"hello", // name
+		"msg", // name
 		false,   // durable
 		false,   // delete when unused
 		false,   // exclusive
@@ -65,7 +65,7 @@ func sender(msg string) {
 	defer ch.Close()
 
 	q, err := ch.QueueDeclare(
-		"hello", // name
+		"msg", // name
 		false,   // durable
 		false,   // delete when unused
 		false,   // exclusive
