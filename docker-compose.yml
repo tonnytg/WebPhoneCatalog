@@ -13,6 +13,15 @@ services:
     networks:
       - app-network
 
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:latest
+    ports:
+      - 5672:5672
+      - 15672:15672
+    networks:
+      - app-network
+
   backend:
     #    image: tonnytg/catalogapi:version1.0
     build:
@@ -26,15 +35,7 @@ services:
       - "3000:3000"
     depends_on:
       - "database"
-
-  rabbitmq:
-    container_name: rabbitmq
-    image: rabbitmq:3.8.12-management
-    ports:
-      - 5672:5672
-      - 15672:15672
-    networks:
-      - app-network
+      - "rabbitmq"
 
 networks:
   app-network:
