@@ -11,7 +11,8 @@ var (
 	err error
 )
 
-func init() {
+func sqlSelect() {
+
 	fmt.Printf("Accessing %s ... ", DbName)
 
 	db, err = sql.Open(DatabaseDriver, DataSourceName)
@@ -22,10 +23,6 @@ func init() {
 	}
 
 	fmt.Println("Connected!")
-	defer db.Close()
-}
-
-func sqlSelect() {
 
 	rows, err := db.Query("SELECT id, name, phone FROM " + TableName)
 	if err != nil {
@@ -42,26 +39,40 @@ func sqlSelect() {
 		}
 		fmt.Printf("%d\t%s\t%s \n", contact.ID, contact.Name, contact.Phone)
 	}
-	rows.Close()
+	defer db.Close()
 }
 
-func sqlInsert(id int, name, phone string) {
+func sqlInsert(id, name, phone string) error {
+
+	fmt.Printf("Accessing %s ... ", DbName)
+
+	db, err = sql.Open(DatabaseDriver, DataSourceName)
+
+	if err != nil {
+		panic(err.Error())
+	}
+
+	fmt.Println("Connected!")
 
 	rows := fmt.Sprintf("INSERT INTO %s VALUES ($1, $2, $3)", TableName)
 
 	insert, err := db.Prepare(rows)
 	if err != nil {
 		log.Fatal("Prepare SQL:", err)
+		return err
 	}
 
-	result, err := insert.Exec(id, name, phone)
+	result, err := insert.Exec(2, name, phone)
 	if err != nil {
 		log.Fatalln("Insert SQL:", err)
+		return err
 	}
-
+	defer db.Close()
 	affect, err := result.RowsAffected()
 	if err != nil {
 		log.Fatalln("Rows Affect SQL:", err)
+		return err
 	}
 	fmt.Println(affect)
+	return nil
 }
