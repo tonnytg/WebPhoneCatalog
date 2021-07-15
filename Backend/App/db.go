@@ -15,31 +15,26 @@ func sqlSelect() map[string]contact {
 
 	mc := make(map[string]contact)
 
-	fmt.Printf("Accessing %s ... ", DbName)
-
+	log.Println("Opening DB...")
 	db, err = sql.Open(DatabaseDriver, DataSourceName)
-
 	if err != nil {
 		panic(err.Error())
 	}
 
-	fmt.Println("Connected!")
-
+	log.Println("DB accessed!")
 	rows, err := db.Query("SELECT id, name, phone FROM " + TableName)
 	if err != nil {
 		log.Fatal("Build Query:", err)
 	}
 
 	for rows.Next() {
-
 		var c contact
-
 		err = rows.Scan(&c.ID, &c.Name, &c.Phone)
 		if err != nil {
 			log.Fatal("Scan copy:", err)
 		}
-		fmt.Printf("%d\t%s\t%s \n", c.ID, c.Name, c.Phone)
 
+		fmt.Printf("%d\t%s\t%s \n", c.ID, c.Name, c.Phone)
 		mc[c.Name] = contact{c.ID, c.Name, c.Phone}
 	}
 	defer db.Close()
@@ -50,15 +45,13 @@ func sqlSelectWhere(x string) map[string]contact {
 
 	mc := make(map[string]contact)
 
-	fmt.Printf("Accessing %s ... ", DbName)
-
+	log.Println("Opening DB...")
 	db, err = sql.Open(DatabaseDriver, DataSourceName)
-
 	if err != nil {
 		panic(err.Error())
 	}
 
-	fmt.Println("Connected!")
+	log.Println("DB accessed!")
 
 	rows, err := db.Query("SELECT id, name, phone FROM " + TableName + " WHERE id =" + x)
 	if err != nil {
@@ -83,13 +76,13 @@ func sqlSelectWhere(x string) map[string]contact {
 
 func sqlInsert(id int, name, phone string) error {
 
-	fmt.Printf("Accessing %s ... ", DbName)
+	log.Println("Opening DB...")
 	db, err = sql.Open(DatabaseDriver, DataSourceName)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	fmt.Println("Connected!")
+	log.Println("DB accessed!")
 	defer db.Close()
 	rows := fmt.Sprintf("INSERT INTO %s VALUES ($1, $2, $3)", TableName)
 
