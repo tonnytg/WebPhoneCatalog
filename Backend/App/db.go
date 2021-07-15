@@ -91,11 +91,10 @@ func sqlInsert(id int, name, phone string) error {
 		return err
 	}
 
-	affect, err := result.RowsAffected()
+	_, err = result.RowsAffected()
 	if err != nil {
 		log.Fatalln("Rows Affect SQL:", err)
 		return err
 	}
-	fmt.Println(affect)
 	return nil
 }
