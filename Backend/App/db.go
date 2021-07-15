@@ -11,7 +11,9 @@ var (
 	err error
 )
 
-func sqlSelect() {
+func sqlSelect() map[string]contact {
+
+	mc := make(map[string]contact)
 
 	fmt.Printf("Accessing %s ... ", DbName)
 
@@ -19,7 +21,6 @@ func sqlSelect() {
 
 	if err != nil {
 		panic(err.Error())
-		return
 	}
 
 	fmt.Println("Connected!")
@@ -31,15 +32,18 @@ func sqlSelect() {
 
 	for rows.Next() {
 
-		var contact contact
+		var c contact
 
-		err = rows.Scan(&contact.ID, &contact.Name, &contact.Phone)
+		err = rows.Scan(&c.ID, &c.Name, &c.Phone)
 		if err != nil {
 			log.Fatal("Scan copy:", err)
 		}
-		fmt.Printf("%d\t%s\t%s \n", contact.ID, contact.Name, contact.Phone)
+		fmt.Printf("%d\t%s\t%s \n", c.ID, c.Name, c.Phone)
+
+		mc[c.Name] = contact{c.ID, c.Name, c.Phone}
 	}
 	defer db.Close()
+	return mc
 }
 
 func sqlInsert(id int, name, phone string) error {
