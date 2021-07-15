@@ -42,18 +42,16 @@ func sqlSelect() {
 	defer db.Close()
 }
 
-func sqlInsert(id, name, phone string) error {
+func sqlInsert(id int, name, phone string) error {
 
 	fmt.Printf("Accessing %s ... ", DbName)
-
 	db, err = sql.Open(DatabaseDriver, DataSourceName)
-
 	if err != nil {
 		panic(err.Error())
 	}
 
 	fmt.Println("Connected!")
-
+	defer db.Close()
 	rows := fmt.Sprintf("INSERT INTO %s VALUES ($1, $2, $3)", TableName)
 
 	insert, err := db.Prepare(rows)
@@ -62,12 +60,12 @@ func sqlInsert(id, name, phone string) error {
 		return err
 	}
 
-	result, err := insert.Exec(2, name, phone)
+	result, err := insert.Exec(id, name, phone)
 	if err != nil {
 		log.Fatalln("Insert SQL:", err)
 		return err
 	}
-	defer db.Close()
+
 	affect, err := result.RowsAffected()
 	if err != nil {
 		log.Fatalln("Rows Affect SQL:", err)
