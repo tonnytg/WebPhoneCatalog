@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"regexp"
 )
@@ -83,6 +84,13 @@ func (h *userHandler) Create(w http.ResponseWriter, r *http.Request) {
 	h.store.Lock()
 	h.store.m[u.ID] = u
 	h.store.Unlock()
+	fmt.Println(u)
+	err := sqlInsert(u.ID, u.Name, u.Phone)
+	if err != nil {
+		log.Fatal("Houston we have a problem!\nErr:", err)
+	}
+
+	fmt.Fprintf(w, "Teste: %v\n", u)
 	jsonBytes, err := json.Marshal(u)
 	if err != nil {
 		internalServerError(w, r)
