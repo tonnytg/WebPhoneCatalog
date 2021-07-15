@@ -15,13 +15,11 @@ func sqlSelect() map[string]contact {
 
 	mc := make(map[string]contact)
 
-	log.Println("Opening DB...")
 	db, err = sql.Open(DatabaseDriver, DataSourceName)
 	if err != nil {
-		panic(err.Error())
+		log.Panic(err.Error())
 	}
 
-	log.Println("DB accessed!")
 	rows, err := db.Query("SELECT id, name, phone FROM " + TableName)
 	if err != nil {
 		log.Fatal("Build Query:", err)
@@ -45,13 +43,10 @@ func sqlSelectWhere(x string) map[string]contact {
 
 	mc := make(map[string]contact)
 
-	log.Println("Opening DB...")
 	db, err = sql.Open(DatabaseDriver, DataSourceName)
 	if err != nil {
 		panic(err.Error())
 	}
-
-	log.Println("DB accessed!")
 
 	rows, err := db.Query("SELECT id, name, phone FROM " + TableName + " WHERE id =" + x)
 	if err != nil {
@@ -76,13 +71,11 @@ func sqlSelectWhere(x string) map[string]contact {
 
 func sqlInsert(id int, name, phone string) error {
 
-	log.Println("Opening DB...")
 	db, err = sql.Open(DatabaseDriver, DataSourceName)
 	if err != nil {
 		panic(err.Error())
 	}
 
-	log.Println("DB accessed!")
 	defer db.Close()
 	rows := fmt.Sprintf("INSERT INTO %s VALUES ($1, $2, $3)", TableName)
 
