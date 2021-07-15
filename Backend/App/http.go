@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"regexp"
+	"strconv"
 )
 
 var (
@@ -43,13 +44,17 @@ func (h *userHandler) List(w http.ResponseWriter, r *http.Request) {
 		contact = append(contact, v)
 	}
 	h.store.RUnlock()
-	jsonBytes, err := json.Marshal(contact)
+	mc := sqlSelect()
+	//jsonBytes, err := json.Marshal(contact)
+	jsonBytes, err := json.Marshal(mc)
 	if err != nil {
 		internalServerError(w, r)
 		return
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonBytes)
+
+
 }
 
 func (h *userHandler) Get(w http.ResponseWriter, r *http.Request) {
@@ -81,16 +86,17 @@ func (h *userHandler) Create(w http.ResponseWriter, r *http.Request) {
 		internalServerError(w, r)
 		return
 	}
+
 	h.store.Lock()
 	h.store.m[u.ID] = u
 	h.store.Unlock()
-	fmt.Println(u)
-	err := sqlInsert(u.ID, u.Name, u.Phone)
+
+	n, _ := strconv.Atoi(u.ID)
+	err := sqlInsert(n, u.Name, u.Phone)
 	if err != nil {
 		log.Fatal("Houston we have a problem!\nErr:", err)
 	}
 
-	fmt.Fprintf(w, "Teste: %v\n", u)
 	jsonBytes, err := json.Marshal(u)
 	if err != nil {
 		internalServerError(w, r)
