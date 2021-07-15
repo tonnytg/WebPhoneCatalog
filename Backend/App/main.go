@@ -28,16 +28,10 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	userH := &userHandler{
-		store: &datastore{
-			m: map[string]contact{
-				"1": contact{ID: "1", Name: "tonnytg", Phone: "+551199999999"},
-			},
-			RWMutex: &sync.RWMutex{},
-		},
-	}
-	mux.Handle("/contacts", userH)
-	mux.Handle("/contact/", userH)
+	catalog := &userHandler{ store: &datastore{}}
+
+	mux.Handle("/contacts", catalog)
+	mux.Handle("/contact/", catalog)
 
 	go receiver()
 
