@@ -44,7 +44,7 @@ func receiver() {
 
 	forever := make(chan bool)
 
-	go func() {
+	func() {
 		for d := range msgs {
 			log.Printf("Received a message: %s", d.Body)
 		}
