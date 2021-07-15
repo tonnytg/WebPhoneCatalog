@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"log"
 	"net/http"
 	"regexp"
@@ -20,18 +19,16 @@ func (h *userHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	switch {
 	case r.Method == http.MethodGet && listContactRegex.MatchString(r.URL.Path):
 		h.List(w, r)
-		fmt.Println("List All accessed!")
 		return
 	case r.Method == http.MethodGet && getContactRegex.MatchString(r.URL.Path):
 		h.Get(w, r)
-		fmt.Println("Get One Contact accessed!")
 		return
 	case r.Method == http.MethodPost && createContactRegex.MatchString(r.URL.Path):
 		h.Create(w, r)
-		fmt.Println("Creat Contact accessed!")
 		return
 	default:
 		notFound(w, r)
+		log.Fatal("not found:", w, r)
 		return
 	}
 }
@@ -39,7 +36,6 @@ func (h *userHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (h *userHandler) List(w http.ResponseWriter, r *http.Request) {
 
 	mc := sqlSelect()
-	//jsonBytes, err := json.Marshal(contact)
 	jsonBytes, err := json.Marshal(mc)
 	if err != nil {
 		internalServerError(w, r)
@@ -56,7 +52,6 @@ func (h *userHandler) Get(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	mc := sqlSelectWhere(matches[1])
-	//jsonBytes, err := json.Marshal(contact)
 	jsonBytes, err := json.Marshal(mc)
 	if err != nil {
 		internalServerError(w, r)
@@ -72,10 +67,6 @@ func (h *userHandler) Create(w http.ResponseWriter, r *http.Request) {
 		internalServerError(w, r)
 		return
 	}
-
-	h.store.Lock()
-	h.store.m[u.ID] = u
-	h.store.Unlock()
 
 	n, _ := strconv.Atoi(u.ID)
 	err := sqlInsert(n, u.Name, u.Phone)
