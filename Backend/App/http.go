@@ -37,13 +37,7 @@ func (h *userHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *userHandler) List(w http.ResponseWriter, r *http.Request) {
-	h.store.RLock()
 
-	contact := make([]contact, 0, len(h.store.m))
-	for _, v := range h.store.m {
-		contact = append(contact, v)
-	}
-	h.store.RUnlock()
 	mc := sqlSelect()
 	//jsonBytes, err := json.Marshal(contact)
 	jsonBytes, err := json.Marshal(mc)
@@ -53,8 +47,6 @@ func (h *userHandler) List(w http.ResponseWriter, r *http.Request) {
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Write(jsonBytes)
-
-
 }
 
 func (h *userHandler) Get(w http.ResponseWriter, r *http.Request) {
@@ -63,15 +55,9 @@ func (h *userHandler) Get(w http.ResponseWriter, r *http.Request) {
 		notFound(w, r)
 		return
 	}
-	h.store.RLock()
-	u, ok := h.store.m[matches[1]]
-	h.store.RUnlock()
-	if !ok {
-		w.WriteHeader(http.StatusNotFound)
-		w.Write([]byte("contact not found"))
-		return
-	}
-	jsonBytes, err := json.Marshal(u)
+	mc := sqlSelectWhere(matches[1])
+	//jsonBytes, err := json.Marshal(contact)
+	jsonBytes, err := json.Marshal(mc)
 	if err != nil {
 		internalServerError(w, r)
 		return
