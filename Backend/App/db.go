@@ -32,7 +32,6 @@ func sqlSelect() map[string]contact {
 			log.Fatal("Scan copy:", err)
 		}
 
-		fmt.Printf("%d\t%s\t%s \n", c.ID, c.Name, c.Phone)
 		mc[c.Name] = contact{c.ID, c.Name, c.Phone}
 	}
 	defer db.Close()
@@ -61,7 +60,6 @@ func sqlSelectWhere(x string) map[string]contact {
 		if err != nil {
 			log.Fatal("Scan copy:", err)
 		}
-		fmt.Printf("%d\t%s\t%s \n", c.ID, c.Name, c.Phone)
 
 		mc[c.Name] = contact{c.ID, c.Name, c.Phone}
 	}
