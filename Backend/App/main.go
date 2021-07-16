@@ -10,13 +10,17 @@ import (
 )
 
 type contact struct {
-	ID    string `json:"id"`
+	ID    int    `json:"id"`
 	Name  string `json:"name"`
 	Phone string `json:"phone"`
 }
 
+type catalog struct {
+	m map[int]contact
+}
+
 type datastore struct {
-	m map[string]contact
+	catalog []catalog
 	*sync.RWMutex
 }
 
@@ -28,16 +32,16 @@ func main() {
 
 	mux := http.NewServeMux()
 
-	catalog := &userHandler{ store: &datastore{}}
+	catalog := &userHandler{store: &datastore{}}
 
 	mux.Handle("/contacts", catalog)
 	mux.Handle("/contact/", catalog)
 
 	go receiver()
 
-	fmt.Println("Conf connection: 0.0.0.0:3000")
-	fmt.Println("Try access: http://localhost:3000/contacts")
-	err := http.ListenAndServe("0.0.0.0:3000", mux)
+	fmt.Println("Conf connection: 0.0.0.0:3001")
+	fmt.Println("Try access: http://localhost:3001/contacts")
+	err := http.ListenAndServe("0.0.0.0:3001", mux)
 	if err != nil {
 		log.Println(err)
 	}
