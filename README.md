@@ -16,6 +16,7 @@ CI: Github Actions and FluxCD
 - [x] Save values at PostgreSQL
 - [x] Create a RabbitMQ
 - [x] Create a Front
+- [x] Create a Makefile  
 - [ ] Create a Backend module for queue consumers
 - [ ] Create a Tests
 - [ ] Create KeyCloak authorization
@@ -25,4 +26,15 @@ CI: Github Actions and FluxCD
 
 
 
-Complete: 40%
+
+Complete: 45%
+
+<hr>
+
+## How to use
+
+You need Docker and Docker Compose installed!
+
+`$make local`
+
+This command will construct local environment
