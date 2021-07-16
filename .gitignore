@@ -1,6 +1,9 @@
 # IDE
 .idea
 
+#Javascript
+node_modules
+
 # Binaries for programs and plugins
 *.exe
 *.exe~
