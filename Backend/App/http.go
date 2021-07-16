@@ -5,7 +5,6 @@ import (
 	"log"
 	"net/http"
 	"regexp"
-	"strconv"
 )
 
 var (
@@ -15,6 +14,7 @@ var (
 )
 
 func (h *userHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("content-type", "application/json")
 	switch {
 	case r.Method == http.MethodGet && listContactRegex.MatchString(r.URL.Path):
@@ -36,7 +36,12 @@ func (h *userHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 func (h *userHandler) List(w http.ResponseWriter, r *http.Request) {
 
 	mc := sqlSelect()
-	jsonBytes, err := json.Marshal(mc)
+	list := make([]contact, 0, len(mc))
+	for _, v := range mc {
+		list = append(list, v)
+	}
+
+	jsonBytes, err := json.Marshal(list)
 	if err != nil {
 		internalServerError(w, r)
 		return
@@ -68,8 +73,7 @@ func (h *userHandler) Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	n, _ := strconv.Atoi(u.ID)
-	err := sqlInsert(n, u.Name, u.Phone)
+	err := sqlInsert(u.ID, u.Name, u.Phone)
 	if err != nil {
 		log.Fatal("Houston we have a problem!\nErr:", err)
 	}
