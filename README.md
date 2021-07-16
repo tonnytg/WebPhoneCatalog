@@ -15,13 +15,14 @@ CI: Github Actions and FluxCD
 - [x] Mock Backend
 - [x] Save values at PostgreSQL
 - [x] Create a RabbitMQ
-- [ ] Create Deployment k8s with Prometheus
-- [ ] Create KeyCloak integration for API
+- [x] Create a Front
 - [ ] Create a Backend module for queue consumers
-- [ ] Create a Tests   
-- [ ] Install and Config Istio and Kiali  
-- [ ] Create a Front
+- [ ] Create a Tests
+- [ ] Create KeyCloak authorization
 - [ ] Integration Front with KeyCloack
+- [ ] Create Deployment k8s with Prometheus
+- [ ] Install and Config Istio and Kiali
 
 
-Complete: 30%
+
+Complete: 40%
