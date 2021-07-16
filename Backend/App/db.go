@@ -11,9 +11,9 @@ var (
 	err error
 )
 
-func sqlSelect() map[string]contact {
+func sqlSelect() map[int]contact {
 
-	mc := make(map[string]contact)
+	mc := make(map[int]contact)
 
 	db, err = sql.Open(DatabaseDriver, DataSourceName)
 	if err != nil {
@@ -32,15 +32,15 @@ func sqlSelect() map[string]contact {
 			log.Fatal("Scan copy:", err)
 		}
 
-		mc[c.Name] = contact{c.ID, c.Name, c.Phone}
+		mc[c.ID] = contact{c.ID, c.Name, c.Phone}
 	}
 	defer db.Close()
 	return mc
 }
 
-func sqlSelectWhere(x string) map[string]contact {
+func sqlSelectWhere(x string) map[int]contact {
 
-	mc := make(map[string]contact)
+	mc := make(map[int]contact)
 
 	db, err = sql.Open(DatabaseDriver, DataSourceName)
 	if err != nil {
@@ -61,7 +61,7 @@ func sqlSelectWhere(x string) map[string]contact {
 			log.Fatal("Scan copy:", err)
 		}
 
-		mc[c.Name] = contact{c.ID, c.Name, c.Phone}
+		mc[c.ID] = contact{c.ID, c.Name, c.Phone}
 	}
 	defer db.Close()
 	return mc
