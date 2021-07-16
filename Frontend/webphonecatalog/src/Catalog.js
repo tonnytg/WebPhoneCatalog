@@ -2,7 +2,7 @@ import React from 'react';
 
 import axios from 'axios';
 
-export default class PersonList extends React.Component {
+export default class Catalog extends React.Component {
     state = {
         contacts: []
     }
@@ -17,9 +17,26 @@ export default class PersonList extends React.Component {
 
     render() {
         return (
-            <ul>
-                { this.state.contacts.map(contact => <li>{contact.name}</li>)}
-            </ul>
-        )
-    }
+            // <ul>
+            //     { this.state.contacts.map(item =>
+            //         <li key={item.id}>{item.name}</li>
+            //         )}
+            // </ul>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                    </tr>
+                </thead>
+                <tfoot>
+                    {this.state.contacts.map((item =>
+                        <tr>
+                            <td>{item.name}</td>
+                            <td>{item.phone}</td>
+                        </tr>
+                    ))}
+                </tfoot>
+            </table>
+        )}
 }
