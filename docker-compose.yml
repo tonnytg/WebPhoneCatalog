@@ -37,6 +37,22 @@ services:
       - "database"
       - "rabbitmq"
 
+  frontend:
+    #    image: tonnytg/catalogapi:version1.0
+    build:
+      context: Frontend
+    container_name: frontend
+    restart: always
+    tty: true
+    networks:
+      - app-network
+    ports:
+      - "3000:3000"
+    depends_on:
+      - "database"
+      - "rabbitmq"
+      - "backend"
+
 networks:
   app-network:
     driver: bridge
